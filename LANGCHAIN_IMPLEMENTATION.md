@@ -31,10 +31,10 @@
 ### 技术栈版本
 
 ```
-langchain >= 0.3.0
-langchain-core >= 0.3.0
-langchain-community >= 0.3.0
-langgraph >= 0.2.0
+langchain == 1.2.0
+langchain-core == 1.0.6
+langchain-community == 1.0.5
+langgraph == 1.0.5
 chromadb >= 0.5.0
 sentence-transformers >= 2.2.0
 ```

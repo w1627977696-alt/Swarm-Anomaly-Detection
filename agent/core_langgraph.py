@@ -11,8 +11,13 @@ LangGraph 提供了状态管理和 Agent 编排功能。
 3. 可视化的工作流
 4. 灵活的条件路由
 
+框架版本:
+- LangGraph: 1.0.5
+- LangChain: 1.2.0
+- LangChain-Core: 1.0.6
+
 Author: AI Agent
-Version: 2.0.0 (LangGraph)
+Version: 2.0.0 (LangGraph 1.0.5)
 """
 
 import os

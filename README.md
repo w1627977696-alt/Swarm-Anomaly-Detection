@@ -75,8 +75,8 @@
 
 | 组件 | 技术 | 版本 | 用途 |
 |------|------|------|------|
-| Agent 编排 | LangGraph | 0.2.0+ | 状态化 Agent 工作流 |
-| RAG 框架 | LangChain | 0.3.0+ | 知识检索增强生成 |
+| Agent 编排 | LangGraph | 1.0.5 | 状态化 Agent 工作流 |
+| RAG 框架 | LangChain | 1.2.0 | 知识检索增强生成 |
 | 向量数据库 | ChromaDB | 0.5.0+ | 向量存储和相似度搜索 |
 | 嵌入模型 | Sentence-Transformers | 2.2.0+ | 文本语义编码 |
 | 深度学习 | PyTorch + PyG | 1.10.0+ | 异常检测模型 |

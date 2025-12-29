@@ -8,11 +8,18 @@ UAV Swarm Anomaly Knowledge Base - LangChain Implementation
 功能：
 1. 使用 LangChain 的文档加载器管理知识
 2. 使用 Chroma 向量存储进行语义搜索
-3. 使用 sentence-transformers 进行高质量嵌入
-4. 支持多种检索策略（相似度、MMR 等）
+3. 使用 sentence-transformers 进行高质量嵌入（生产环境）
+4. 支持离线模式（使用 FakeEmbeddings）
+5. 支持多种检索策略（相似度、MMR 等）
+
+框架版本:
+- LangChain: 1.2.0
+- LangChain-Core: 1.0.6
+- LangChain-Community: 1.0.5
+- ChromaDB: 0.5.0+
 
 Author: AI Agent
-Version: 2.0.0 (LangChain)
+Version: 2.0.0 (LangChain 1.2.0)
 """
 
 import os
@@ -56,13 +63,25 @@ class DroneAnomalyKnowledgeBase:
         self.base_path = base_path
         os.makedirs(base_path, exist_ok=True)
         
-        # 初始化嵌入模型 - 使用简单的本地嵌入
+        # 初始化嵌入模型
+        # 注意：在生产环境中，建议使用 sentence-transformers 进行高质量语义嵌入
+        # 在离线/开发环境中，使用 FakeEmbeddings 进行快速测试
         print("[KnowledgeBase] 初始化嵌入模型...")
         try:
-            # 优先使用本地已有模型（如果存在）
+            # 尝试使用真实的嵌入模型（需要网络连接下载模型）
+            # 如果需要使用，请取消下面的注释并注释掉 FakeEmbeddings 部分
+            # from langchain_community.embeddings import HuggingFaceEmbeddings
+            # self.embeddings = HuggingFaceEmbeddings(
+            #     model_name="sentence-transformers/all-MiniLM-L6-v2",
+            #     model_kwargs={'device': 'cpu'},
+            #     encode_kwargs={'normalize_embeddings': True}
+            # )
+            
+            # 使用 FakeEmbeddings 用于离线开发和测试
+            # 在生产环境中，请切换到上面的 HuggingFaceEmbeddings
             from langchain_community.embeddings import FakeEmbeddings
-            print("[KnowledgeBase] 使用简化的本地嵌入模型（适用于离线环境）")
-            # 使用固定维度的假嵌入用于演示
+            print("[KnowledgeBase] 使用 FakeEmbeddings（离线模式）")
+            print("[KnowledgeBase] 提示：生产环境请使用 HuggingFaceEmbeddings 以获得更好的语义搜索效果")
             self.embeddings = FakeEmbeddings(size=384)
             self._use_fake_embeddings = True
         except Exception as e:

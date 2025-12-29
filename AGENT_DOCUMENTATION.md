@@ -19,8 +19,8 @@
 
 ### 技术栈
 
-- **Agent 框架**: LangGraph 0.2.0+
-- **RAG 框架**: LangChain 0.3.0+
+- **Agent 框架**: LangGraph 1.0.5
+- **RAG 框架**: LangChain 1.2.0
 - **向量存储**: ChromaDB 0.5.0+
 - **嵌入模型**: Sentence-Transformers 2.2.0+
 
