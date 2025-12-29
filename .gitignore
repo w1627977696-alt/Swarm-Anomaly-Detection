@@ -58,5 +58,12 @@ results/export_*.json
 results/report_*.json
 results/report_*.md
 
-# Knowledge base cache
+# Knowledge base cache and vector stores
 knowledge_base/*.json
+knowledge_base/*/
+!knowledge_base/__init__.py
+!knowledge_base/*.py
+
+# ChromaDB vector stores
+*.sqlite3
+*.bin
