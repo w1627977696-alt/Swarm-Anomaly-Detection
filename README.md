@@ -1,4 +1,5 @@
-# 无人机集群异常检测系统 / Drone Swarm Anomaly Detection System
+# 无人机集群异常检测与影响评估Agent系统
+# Drone Swarm Anomaly Detection & Impact Assessment Agent System
 
 [English](#english) | [中文](#chinese)
 
@@ -11,17 +12,60 @@
 
 本项目实现了基于深度学习的无人机集群异常检测系统，结合了Patch机制和图神经网络(GNN)技术，能够有效识别无人机集群中的异常行为及其类型。
 
+**🆕 v2.0新增：Agent智能运维系统**
+
+本项目现已升级为Agent形式的智能运维平台，支持通过自然语言交互执行各种分析任务：
+
+- 🤖 **自然语言交互**：使用中文或英文与系统对话
+- 📊 **数据预处理与可视化**：加载和展示无人机飞行数据
+- 🔄 **数据回放**：回放历史飞行数据
+- 🔍 **异常检测**：基于Patch-GNN模型的智能异常检测
+- 📈 **影响评估**：基于RAG技术的异常影响分析
+- 📝 **报告生成**：生成结构化的综合分析报告
+
+### 快速开始Agent系统
+
+```bash
+# 安装依赖
+pip install -r requirements.txt
+
+# 启动Agent系统
+python main_agent.py
+
+# 然后输入自然语言指令，例如：
+>>> 检测所有无人机的异常
+>>> 评估异常影响
+>>> 生成综合报告
+>>> 帮助
+```
+
+详细使用说明请参阅 [AGENT_DOCUMENTATION.md](AGENT_DOCUMENTATION.md)
+
 ### 主要特性
 
 1. **模拟数据生成**：自动生成包含10架无人机的集群飞行数据，每架无人机包含多维时间序列特征
 2. **智能异常注入**：支持3种典型异常类型的注入，并提供详细的注入日志
 3. **先进的检测模型**：结合Patch自适应选择和图神经网络的深度学习模型
 4. **完整的可视化**：提供预测结果与真实值的对比可视化，并标注异常段
+5. **🆕 Agent智能运维**：自然语言交互的智能运维平台
+6. **🆕 RAG影响评估**：基于知识库的异常影响分析
+7. **🆕 综合报告生成**：自动生成结构化分析报告
 
 ### 系统架构
 
 ```
 Swarm-Anomaly-Detection/
+├── agent/                         # 🆕 Agent模块
+│   ├── __init__.py               # Agent包初始化
+│   ├── core.py                   # Agent核心模块
+│   ├── natural_language_processor.py  # 自然语言处理
+│   ├── data_agent.py             # 数据处理Agent
+│   ├── detection_agent.py        # 异常检测Agent
+│   ├── assessment_agent.py       # 影响评估Agent
+│   └── report_agent.py           # 报告生成Agent
+├── knowledge_base/                # 🆕 RAG知识库
+│   ├── __init__.py               # 知识库初始化
+│   └── knowledge_base.py         # 知识库实现
 ├── data/                          # 数据目录
 │   ├── drone_swarm_normal.csv     # 正常数据
 │   ├── drone_swarm_with_anomalies.csv  # 带异常的数据
@@ -35,10 +79,12 @@ Swarm-Anomaly-Detection/
 │   ├── training_history.json      # 训练历史
 │   ├── training_history.png       # 训练历史图
 │   └── drone_*_results.png        # 各无人机的检测结果
+├── main_agent.py                  # 🆕 Agent系统入口
 ├── generate_data.py               # 数据生成脚本
 ├── inject_anomalies.py            # 异常注入脚本
 ├── train.py                       # 训练脚本
 ├── visualize.py                   # 可视化脚本
+├── AGENT_DOCUMENTATION.md         # 🆕 Agent详细文档
 └── requirements.txt               # 依赖包列表
 ```
 

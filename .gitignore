@@ -52,3 +52,10 @@ Thumbs.db
 # Logs
 logs/
 *.log
+
+# Generated reports (keep markdown reports, exclude json exports)
+results/export_*.json
+results/report_*.json
+
+# Knowledge base cache
+knowledge_base/*.json
