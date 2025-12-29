@@ -14,7 +14,7 @@ LangGraph 提供了状态管理和 Agent 编排功能。
 框架版本:
 - LangGraph: 1.0.5
 - LangChain: 1.2.0
-- LangChain-Core: 1.0.6
+- LangChain-Core: >=1.2.0
 
 Author: AI Agent
 Version: 2.0.0 (LangGraph 1.0.5)

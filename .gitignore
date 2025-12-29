@@ -67,3 +67,6 @@ knowledge_base/*/
 # ChromaDB vector stores
 *.sqlite3
 *.bin
+
+# Test files (temporary)
+test_langchain_compatibility.py

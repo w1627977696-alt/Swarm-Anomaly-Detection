@@ -32,9 +32,11 @@
 
 ```
 langchain == 1.2.0
-langchain-core == 1.0.6
-langchain-community == 1.0.5
+langchain-core >= 1.2.0
+langchain-community >= 0.4.0
 langgraph == 1.0.5
+langgraph-checkpoint >= 3.0.0
+langgraph-prebuilt >= 1.0.0
 chromadb >= 0.5.0
 sentence-transformers >= 2.2.0
 ```

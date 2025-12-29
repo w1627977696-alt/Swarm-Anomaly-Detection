@@ -28,18 +28,19 @@
 
 ```python
 # LangChain 生态系统
-langchain==1.2.0           # 主框架
-langchain-core==1.0.6      # 核心组件  
-langchain-community==1.0.5 # 社区集成
-langgraph==1.0.5           # Agent 编排
-langchain-openai==1.0.1    # OpenAI 集成
+langchain==1.2.0                    # 主框架
+langchain-core>=1.2.0,<2.0.0       # 核心组件  
+langchain-community>=0.4.0,<1.0.0  # 社区集成
+langgraph==1.0.5                   # Agent 编排
+langgraph-checkpoint>=3.0.0,<4.0.0 # 检查点
+langgraph-prebuilt>=1.0.0,<2.0.0   # 预构建组件
 
 # 向量存储与嵌入
 chromadb>=0.5.0
 sentence-transformers>=2.2.0
 faiss-cpu>=1.7.4
 
-# LLM 相关
+# LLM 相关（可选）
 openai>=1.0.0
 tiktoken>=0.7.0
 ```

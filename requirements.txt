@@ -9,24 +9,27 @@ scikit-learn>=1.0.0
 tqdm>=4.62.0
 
 # LangChain 生态系统 / LangChain Ecosystem (最新 1.X 版本)
+# LangChain 1.2.0 及 LangGraph 1.0.5 自动管理依赖版本
 langchain==1.2.0
-langchain-core==1.0.6
-langchain-community==1.0.5
+langchain-core>=1.2.0,<2.0.0
+langchain-community>=0.4.0,<1.0.0
 langgraph==1.0.5
-langchain-openai==1.0.1
+langgraph-checkpoint>=3.0.0,<4.0.0
+langgraph-prebuilt>=1.0.0,<2.0.0
 
 # 向量存储与嵌入 / Vector Store & Embeddings
 chromadb>=0.5.0
 sentence-transformers>=2.2.0
 faiss-cpu>=1.7.4
 
-# LLM 相关 / LLM Related
-openai>=1.0.0
-tiktoken>=0.7.0
+# LLM 相关（可选）/ LLM Related (Optional)
+# 如果需要使用 OpenAI 模型，请取消以下注释
+# openai>=1.0.0
+# tiktoken>=0.7.0
 
-# 文档处理 / Document Processing
-pypdf>=4.0.0
-python-docx>=1.1.0
+# 文档处理（可选）/ Document Processing (Optional)
+# pypdf>=4.0.0
+# python-docx>=1.1.0
 
 # 额外工具 / Additional Tools
 python-dotenv>=1.0.0

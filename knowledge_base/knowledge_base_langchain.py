@@ -14,9 +14,9 @@ UAV Swarm Anomaly Knowledge Base - LangChain Implementation
 
 框架版本:
 - LangChain: 1.2.0
-- LangChain-Core: 1.0.6
-- LangChain-Community: 1.0.5
-- ChromaDB: 0.5.0+
+- LangChain-Core: >=1.2.0
+- LangChain-Community: >=0.4.0
+- ChromaDB: >=0.5.0
 
 Author: AI Agent
 Version: 2.0.0 (LangChain 1.2.0)
