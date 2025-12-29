@@ -12,24 +12,90 @@
 
 本项目实现了基于深度学习的无人机集群异常检测系统，结合了Patch机制和图神经网络(GNN)技术，能够有效识别无人机集群中的异常行为及其类型。
 
-**🆕 v2.0新增：Agent智能运维系统**
+**🆕 v2.0 重大更新：基于 LangChain/LangGraph 的 Agent 系统**
 
-本项目现已升级为Agent形式的智能运维平台，支持通过自然语言交互执行各种分析任务：
+本项目现已全面升级，采用业界成熟的 **LangChain** 和 **LangGraph** 框架重构：
 
-- 🤖 **自然语言交互**：使用中文或英文与系统对话
+- 🤖 **LangGraph 多Agent编排**：使用 StateGraph 实现状态化的 Agent 协作
+- 📚 **LangChain RAG 技术**：基于向量数据库（Chroma）的知识检索增强生成
+- 🔍 **语义搜索**：使用 sentence-transformers 实现高质量的语义理解
 - 📊 **数据预处理与可视化**：加载和展示无人机飞行数据
 - 🔄 **数据回放**：回放历史飞行数据
-- 🔍 **异常检测**：基于Patch-GNN模型的智能异常检测
+- 🎯 **异常检测**：基于Patch-GNN模型的智能异常检测
 - 📈 **影响评估**：基于RAG技术的异常影响分析
 - 📝 **报告生成**：生成结构化的综合分析报告
+
+### 技术架构 v2.0
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         用户交互层                                │
+│                    Natural Language Input                       │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      LangGraph 工作流引擎                         │
+│                        (StateGraph)                             │
+│  ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐  │
+│  │  Router  │───▶│Data Load │───▶│ Detector │───▶│ Assessor │  │
+│  │  Agent   │    │  Agent   │    │  Agent   │    │  Agent   │  │
+│  └──────────┘    └──────────┘    └──────────┘    └──────────┘  │
+│       │                                                │         │
+│       │              ┌──────────┐    ┌──────────┐     │         │
+│       └─────────────▶│ Reporter │◀───│Responder │◀────┘         │
+│                      │  Agent   │    │  Agent   │               │
+│                      └──────────┘    └──────────┘               │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    LangChain RAG 知识库                          │
+│  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐    │
+│  │ Chroma Vector  │  │  Embeddings    │  │   Retrievers   │    │
+│  │     Store      │  │   (Sentence    │  │   (Semantic    │    │
+│  │                │  │  Transformers) │  │    Search)     │    │
+│  └────────────────┘  └────────────────┘  └────────────────┘    │
+│                                                                  │
+│  知识库集合:                                                      │
+│  • 异常类型知识 (Anomaly Types)                                   │
+│  • 严重程度知识 (Severity Levels)                                │
+│  • 影响模式知识 (Impact Patterns)                                │
+│  • 历史案例知识 (Historical Cases)                               │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      深度学习检测模型                             │
+│                    Patch-GNN Architecture                       │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 核心技术栈
+
+| 组件 | 技术 | 版本 | 用途 |
+|------|------|------|------|
+| Agent 编排 | LangGraph | 1.0.5 | 状态化 Agent 工作流 |
+| RAG 框架 | LangChain | 1.2.0 | 知识检索增强生成 |
+| 向量数据库 | ChromaDB | 0.5.0+ | 向量存储和相似度搜索 |
+| 嵌入模型 | Sentence-Transformers | 2.2.0+ | 文本语义编码 |
+| 深度学习 | PyTorch + PyG | 1.10.0+ | 异常检测模型 |
+| 数据处理 | Pandas + NumPy | - | 数据操作和分析 |
 
 ### 快速开始Agent系统
 
 ```bash
-# 安装依赖
+# 1. 安装依赖
 pip install -r requirements.txt
 
-# 启动Agent系统
+# 2. 生成无人机数据（如果还没有）
+python generate_data.py
+python inject_anomalies.py
+
+# 3. 训练模型（如果还没有训练）
+python train.py
+
+# 4. 启动 LangGraph Agent 系统
 python main_agent.py
 
 # 然后输入自然语言指令，例如：
@@ -39,33 +105,52 @@ python main_agent.py
 >>> 帮助
 ```
 
-详细使用说明请参阅 [AGENT_DOCUMENTATION.md](AGENT_DOCUMENTATION.md)
-
 ### 主要特性
 
-1. **模拟数据生成**：自动生成包含10架无人机的集群飞行数据，每架无人机包含多维时间序列特征
-2. **智能异常注入**：支持3种典型异常类型的注入，并提供详细的注入日志
-3. **先进的检测模型**：结合Patch自适应选择和图神经网络的深度学习模型
-4. **完整的可视化**：提供预测结果与真实值的对比可视化，并标注异常段
-5. **🆕 Agent智能运维**：自然语言交互的智能运维平台
-6. **🆕 RAG影响评估**：基于知识库的异常影响分析
-7. **🆕 综合报告生成**：自动生成结构化分析报告
+#### 1. **LangGraph 多Agent协作系统**
+- 使用 StateGraph 进行工作流编排
+- 状态化的 Agent 通信
+- 条件路由和动态决策
+- 可视化的工作流图
+
+#### 2. **LangChain RAG 知识库**
+- 基于 ChromaDB 的向量存储
+- 使用 sentence-transformers 进行语义嵌入
+- 支持相似度搜索和 MMR (Maximal Marginal Relevance)
+- 四大知识库集合：
+  - 异常类型知识（5种典型异常）
+  - 严重程度分级（低/中/高）
+  - 影响模式分析（单机/局部/全局/碰撞）
+  - 历史案例库（5个真实案例）
+
+#### 3. **智能异常检测**
+- Patch-GNN 深度学习模型
+- 自适应 Patch 提取
+- 时空特征融合
+- 多任务学习（检测 + 分类）
+
+#### 4. **完整的可视化**
+- 预测结果与真实值对比
+- 异常段标注
+- 训练历史可视化
 
 ### 系统架构
 
 ```
 Swarm-Anomaly-Detection/
-├── agent/                         # 🆕 Agent模块
+├── agent/                         # Agent模块 (LangGraph实现)
 │   ├── __init__.py               # Agent包初始化
-│   ├── core.py                   # Agent核心模块
+│   ├── core.py                   # 原Agent核心模块（兼容）
+│   ├── core_langgraph.py         # 🆕 LangGraph Agent系统
 │   ├── natural_language_processor.py  # 自然语言处理
 │   ├── data_agent.py             # 数据处理Agent
 │   ├── detection_agent.py        # 异常检测Agent
 │   ├── assessment_agent.py       # 影响评估Agent
 │   └── report_agent.py           # 报告生成Agent
-├── knowledge_base/                # 🆕 RAG知识库
+├── knowledge_base/                # 🆕 LangChain RAG知识库
 │   ├── __init__.py               # 知识库初始化
-│   └── knowledge_base.py         # 知识库实现
+│   ├── knowledge_base.py         # 原知识库实现（兼容）
+│   └── knowledge_base_langchain.py # 🆕 LangChain实现
 ├── data/                          # 数据目录
 │   ├── drone_swarm_normal.csv     # 正常数据
 │   ├── drone_swarm_with_anomalies.csv  # 带异常的数据
@@ -79,14 +164,71 @@ Swarm-Anomaly-Detection/
 │   ├── training_history.json      # 训练历史
 │   ├── training_history.png       # 训练历史图
 │   └── drone_*_results.png        # 各无人机的检测结果
-├── main_agent.py                  # 🆕 Agent系统入口
+├── main_agent.py                  # Agent系统入口
 ├── generate_data.py               # 数据生成脚本
 ├── inject_anomalies.py            # 异常注入脚本
 ├── train.py                       # 训练脚本
 ├── visualize.py                   # 可视化脚本
-├── AGENT_DOCUMENTATION.md         # 🆕 Agent详细文档
-└── requirements.txt               # 依赖包列表
+├── requirements.txt               # 🆕 更新：包含LangChain/LangGraph
+├── AGENT_DOCUMENTATION.md         # Agent详细文档
+├── DOCUMENTATION_CN.md            # 详细中文文档
+└── README.md                      # 本文件
 ```
+
+### LangGraph 工作流说明
+
+系统使用 LangGraph 的 StateGraph 实现多 Agent 协作：
+
+1. **Router Agent**: 分析用户输入，决定下一步操作
+2. **Data Loader Agent**: 加载和准备无人机数据
+3. **Anomaly Detector Agent**: 使用 Patch-GNN 检测异常
+4. **Impact Assessor Agent**: 基于 RAG 评估异常影响
+5. **Report Generator Agent**: 生成综合分析报告
+6. **Responder Agent**: 生成用户响应
+
+各 Agent 通过共享状态 (AgentState) 进行通信，状态包括：
+- 消息历史
+- 任务信息
+- 数据加载状态
+- 检测结果
+- 评估结果
+- 报告内容
+
+### LangChain RAG 知识库说明
+
+知识库使用 LangChain 框架实现：
+
+**向量存储**: ChromaDB
+- 持久化存储
+- 快速相似度搜索
+- 支持元数据过滤
+
+**嵌入模型**: Sentence-Transformers (可配置)
+- 默认: all-MiniLM-L6-v2
+- 支持中英文
+- 离线模式可用
+
+**知识集合**:
+1. **异常类型知识** (anomaly_types)
+   - 5种异常类型详细描述
+   - 检测特征和识别方法
+   - 严重程度因素
+   
+2. **严重程度知识** (severity_levels)
+   - 低/中/高三级分类
+   - 阈值指标
+   - 处置建议
+
+3. **影响模式知识** (impact_patterns)
+   - 单机影响
+   - 局部传播
+   - 全局影响
+   - 碰撞风险
+
+4. **历史案例知识** (historical_cases)
+   - 5个真实案例
+   - 根本原因分析
+   - 解决方案和经验教训
 
 ### 数据特征
 

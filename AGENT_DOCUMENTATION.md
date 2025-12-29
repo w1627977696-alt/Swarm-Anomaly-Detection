@@ -6,48 +6,103 @@
 
 ---
 
+## 🆕 v2.0 重大更新
+
+本系统已升级至 v2.0，采用 **LangChain** 和 **LangGraph** 框架重构：
+
+### 主要改进
+
+1. **LangGraph Agent 编排**: 使用 StateGraph 实现状态化的多 Agent 协作
+2. **LangChain RAG 系统**: 基于 ChromaDB 向量存储的知识检索增强生成
+3. **语义搜索**: 使用 sentence-transformers 实现高质量的语义理解
+4. **可扩展架构**: 易于集成新的 Agent 和知识源
+
+### 技术栈
+
+- **Agent 框架**: LangGraph 1.0.5
+- **RAG 框架**: LangChain 1.2.0
+- **向量存储**: ChromaDB 0.5.0+
+- **嵌入模型**: Sentence-Transformers 2.2.0+
+
+### 文档索引
+
+- **技术实现详情**: 参见 [LANGCHAIN_IMPLEMENTATION.md](LANGCHAIN_IMPLEMENTATION.md)
+- **快速开始**: 参见下方使用指南
+- **API 参考**: 参见第7节
+
+---
+
 ## 中文文档
 
 ### 1. 系统概述
 
-无人机集群异常检测Agent系统是一个基于自然语言交互的智能运维平台。该系统将无人机集群的异常检测、影响评估和报告生成功能整合为一个统一的Agent框架，支持用户通过自然语言指令执行各种分析任务。
+无人机集群异常检测Agent系统是一个基于 **LangChain/LangGraph** 框架的智能运维平台。该系统使用 StateGraph 进行 Agent 编排，通过 RAG 技术进行知识检索，实现无人机集群的异常检测、影响评估和报告生成。
 
 #### 1.1 主要功能
 
-| 功能模块 | 描述 | Agent类 |
-|---------|------|--------|
-| 数据预处理与可视化 | 加载、清洗、标准化数据并生成可视化图表 | `DataPreprocessingAgent` |
-| 数据回放 | 回放历史飞行数据，支持指定时间范围 | `DataReplayAgent` |
-| 异常检测 | 使用Patch-GNN模型检测异常行为和类型 | `AnomalyDetectionAgent` |
-| 影响评估 | 基于RAG技术评估异常影响和风险 | `ImpactAssessmentAgent` |
-| 报告生成 | 生成结构化的综合分析报告 | `ReportGenerationAgent` |
+| 功能模块 | 描述 | 实现方式 |
+|---------|------|---------|
+| 路由决策 | 分析用户输入，决定执行流程 | LangGraph Router Agent |
+| 数据加载 | 加载无人机集群数据 | LangGraph Data Loader Agent |
+| 异常检测 | 使用Patch-GNN模型检测异常 | LangGraph Detector Agent |
+| 影响评估 | 基于RAG评估异常影响和风险 | LangGraph Assessor Agent + ChromaDB RAG |
+| 报告生成 | 生成结构化分析报告 | LangGraph Reporter Agent |
+| 用户响应 | 格式化输出给用户 | LangGraph Responder Agent |
 
-#### 1.2 系统架构
+#### 1.2 LangGraph 工作流架构
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    用户自然语言输入                           │
+│                         用户输入                             │
+│                    Natural Language                         │
 └─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
+                               │
+                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│              NaturalLanguageProcessor                        │
-│              (意图识别 + 参数提取)                            │
+│                   LangGraph StateGraph                      │
+│                                                             │
+│  ┌──────────┐    条件路由    ┌──────────┐                  │
+│  │  Router  │───────────────▶│Data Load │                  │
+│  │  Agent   │                │  Agent   │                  │
+│  └────┬─────┘                └────┬─────┘                  │
+│       │                           │                        │
+│       │    ┌──────────┐    ┌──────▼─────┐                 │
+│       ├───▶│ Detector │◀───│  Assessor  │                 │
+│       │    │  Agent   │    │   Agent    │                 │
+│       │    └────┬─────┘    └────┬───────┘                 │
+│       │         │               │                          │
+│       │    ┌────▼─────┐    ┌────▼─────┐                   │
+│       ├───▶│ Reporter │    │Responder │                   │
+│       │    │  Agent   │    │  Agent   │                   │
+│       │    └──────────┘    └────┬─────┘                   │
+│       │                          │                         │
+│       └──────────────────────────┴────▶ END               │
+│                                                            │
+│  状态管理: AgentState (TypedDict)                          │
+│  • messages: List[BaseMessage]                            │
+│  • data_loaded: bool                                      │
+│  • detected_anomalies: List[Dict]                         │
+│  • impact_assessments: List[Dict]                         │
+│  • report: Optional[str]                                  │
+│  • next_action: str                                       │
 └─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
+                               │
+                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                   DroneSwarmAgent (核心)                     │
-│              (任务调度 + 上下文管理)                          │
+│                   LangChain RAG 知识库                       │
+│                      (ChromaDB)                             │
+│                                                             │
+│  ┌────────────────┐  ┌────────────────┐  ┌──────────────┐ │
+│  │ Anomaly Types  │  │ Severity Level │  │   Impact     │ │
+│  │   Knowledge    │  │   Knowledge    │  │  Patterns    │ │
+│  └────────────────┘  └────────────────┘  └──────────────┘ │
+│                                                             │
+│  ┌────────────────────────────────────────────────────┐    │
+│  │            Historical Cases Knowledge              │    │
+│  └────────────────────────────────────────────────────┘    │
+│                                                             │
+│  语义检索: Sentence-Transformers Embeddings                │
 └─────────────────────────────────────────────────────────────┘
-        │           │           │           │           │
-        ▼           ▼           ▼           ▼           ▼
-   ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐
-   │  数据   │ │  回放   │ │  检测   │ │  评估   │ │  报告   │
-   │ Agent  │ │ Agent  │ │ Agent  │ │ Agent  │ │ Agent  │
-   └────────┘ └────────┘ └────────┘ └────────┘ └────────┘
-                              │
-                              ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                    知识库 (RAG)                              │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
