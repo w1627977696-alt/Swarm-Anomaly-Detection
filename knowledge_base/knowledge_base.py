@@ -91,7 +91,7 @@ class KnowledgeBase:
         
         # 归一化
         norm = np.linalg.norm(embedding)
-        if norm > 0:
+        if norm > 1e-10:  # 使用小的epsilon避免数值不稳定
             embedding = embedding / norm
         
         return embedding

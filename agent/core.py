@@ -36,6 +36,11 @@ class AgentState(Enum):
     COMPLETED = "completed"         # 完成状态
 
 
+# 配置常量
+# 当置信度低于此阈值时，返回"无法理解"的响应
+CONFIDENCE_THRESHOLD_UNCLEAR = 0.3
+
+
 class AgentContext:
     """
     Agent上下文类
@@ -407,7 +412,7 @@ class DroneSwarmAgent:
     
     def _handle_unknown(self, user_input: str, confidence: float) -> str:
         """处理无法识别的输入"""
-        if confidence > 0.3:
+        if confidence > CONFIDENCE_THRESHOLD_UNCLEAR:
             return f"您的请求 '{user_input}' 不太明确，请尝试更具体的描述。\n输入 '帮助' 查看支持的功能。"
         else:
             return f"抱歉，我无法理解您的请求: '{user_input}'\n请输入 '帮助' 查看支持的功能和示例指令。"
